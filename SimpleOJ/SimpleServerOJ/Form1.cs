@@ -15,6 +15,15 @@ namespace SimpleServerOJ
         public Form1()
         {
             InitializeComponent();
+            Application.Application.LoadApp(typeof(Application.Judge.JudgeController));
+            Net.HttpServer server = new Net.HttpServer(8080);
+            server.HttpGotRequest += Server_HttpGotRequest;
+            server.Start();
+        }
+
+        private Net.HttpResponseArgs Server_HttpGotRequest(Net.HttpArgs args)
+        {
+            return Application.Application.Handle(args);
         }
     }
 }
