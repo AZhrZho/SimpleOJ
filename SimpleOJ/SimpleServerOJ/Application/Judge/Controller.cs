@@ -42,7 +42,7 @@ namespace SimpleServerOJ.Application.Judge
                     {"time",DateTime.Now }
                 });
             }
-            var reslut = Handler.Judge(id, exe);
+            var reslut = Handler.Judge(id, exe, language);
             model.Insert(new Dictionary<string, object>
                 {
                     {"problem",id },

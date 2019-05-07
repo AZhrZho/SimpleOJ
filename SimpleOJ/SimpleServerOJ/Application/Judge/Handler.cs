@@ -12,6 +12,7 @@ namespace SimpleServerOJ.Application.Judge
     {
         public static string CodePathRoot = "code";
         public static DirectoryInfo CompilerPath = new DirectoryInfo(@"MinGW\bin");
+        public static DirectoryInfo JdkPath = new DirectoryInfo(@"Jdk\bin");
         public static DirectoryInfo ExecutePath = new DirectoryInfo("exe");
         public static DirectoryInfo AnswerPath = new DirectoryInfo("exam");
         public static FileInfo SaveAsFile(string code, string id, string sno, string fix)
@@ -30,44 +31,89 @@ namespace SimpleServerOJ.Application.Judge
             {
                 case "c":
                 case "cpp":
-                    Process process = new Process();
-                    process.StartInfo = new ProcessStartInfo
                     {
-                        Arguments = string.Format("{0} -o {1}", source.FullName, ExecutePath.FullName + @"\" + source.Name.Replace(source.Extension, string.Empty)),
-                        FileName = CompilerPath.FullName + @"\g++.exe",
-                        CreateNoWindow = true,
-                        WindowStyle = ProcessWindowStyle.Minimized,
-                        UseShellExecute = true,
-                        WorkingDirectory = CompilerPath.FullName
-                    };
-                    process.Start();
-                    process.WaitForExit();
-                    break;
+                        Process process = new Process();
+                        process.StartInfo = new ProcessStartInfo
+                        {
+                            Arguments = string.Format("{0} -o {1}", source.FullName, ExecutePath.FullName + @"\" + source.Name.Replace(source.Extension, string.Empty)),
+                            FileName = CompilerPath.FullName + @"\g++.exe",
+                            CreateNoWindow = true,
+                            WindowStyle = ProcessWindowStyle.Minimized,
+                            UseShellExecute = true,
+                            WorkingDirectory = CompilerPath.FullName
+                        };
+                        process.Start();
+                        process.WaitForExit();
+                        return new FileInfo(ExecutePath.FullName + @"\" + source.Name.Replace(source.Extension, string.Empty) + ".exe");
+                    }
+                case "java":
+                    {
+                        Process process = new Process();
+                        process.StartInfo = new ProcessStartInfo
+                        {
+                            Arguments = source.FullName,
+                            FileName = JdkPath.FullName + @"\javac.exe",
+                            CreateNoWindow = true,
+                            WindowStyle = ProcessWindowStyle.Minimized,
+                            UseShellExecute = true,
+                            WorkingDirectory = JdkPath.FullName
+                        };
+                        process.Start();
+                        process.WaitForExit();
+                        return new FileInfo(CodePathRoot + @"\Main.class");
+                    }
                 default:
                     throw new Exception("No such compiler.");
             }
-            return new FileInfo(ExecutePath.FullName + @"\" + source.Name.Replace(source.Extension, string.Empty) + ".exe"); 
+            
         }
 
-        public static JudgeModel Judge(string id, FileInfo file)
+        public static JudgeModel Judge(string id, FileInfo file,string fix)
         {
-            var problem = ReadProblem(id);
             if (!file.Exists) return new JudgeModel()
             {
                 Pass = false,
                 Result = JudgeResult.EA,
                 Time = 0
             };
-            Process p = new Process();
-            p.StartInfo = new ProcessStartInfo
+            var problem = ReadProblem(id);
+            ProcessStartInfo startInfo = new ProcessStartInfo();
+            switch (fix)
             {
-                CreateNoWindow = true,
-                FileName = file.FullName,
-                WindowStyle = ProcessWindowStyle.Minimized,
-                UseShellExecute = false,
-                RedirectStandardOutput = true,
-                RedirectStandardInput = true
-            };
+                #region c/cpp
+                case "c":
+                case "cpp":
+                    {
+                        startInfo = new ProcessStartInfo
+                        {
+                            CreateNoWindow = true,
+                            FileName = file.FullName,
+                            WindowStyle = ProcessWindowStyle.Minimized,
+                            UseShellExecute = false,
+                            RedirectStandardOutput = true,
+                            RedirectStandardInput = true
+                        };
+                    }
+                    break;
+                #endregion
+                case "java":
+                    {
+                        startInfo = new ProcessStartInfo
+                        {
+                            CreateNoWindow = true,
+                            Arguments= "Main",
+                            FileName = JdkPath.FullName+@"\java.exe",
+                            WindowStyle = ProcessWindowStyle.Maximized,
+                            UseShellExecute = false,
+                            RedirectStandardOutput = true,
+                            RedirectStandardInput = true,
+                            WorkingDirectory=CodePathRoot
+                        };
+                    }
+                    break;
+            }
+            Process p = new Process();
+            p.StartInfo = startInfo;
             var ua = new StringBuilder();
             p.OutputDataReceived += (s, e) =>
             {
@@ -94,6 +140,7 @@ namespace SimpleServerOJ.Application.Judge
             }
             catch { }
             var t = (int)(DateTime.Now - start).TotalMilliseconds;
+            file.Delete();
             var uas = ua.ToString();
             var pass = problem.Out == uas ? true : false;
             return new JudgeModel()
