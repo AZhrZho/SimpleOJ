@@ -14,8 +14,8 @@ namespace SimpleServerOJ.Application.Judge
         public HttpResponseArgs Handle(HttpArgs args)
         {
             var model = new JudgeModel();
-            var code = (string)args.GetPostValue()["code"];
-            var session = (string)args.GetPostValue()["session"];
+            var code = args.GetPostValue()["code"].ToString();
+            var session = args.GetPostValue()["session"].ToString();
             var id = args.GetArgValue("id");        //题目ID
             var language = args.GetArgValue("lan"); //语言
             var sno = Data.GetSno(session);

@@ -14,9 +14,10 @@ namespace SimpleServerOJ
         [STAThread]
         static void Main()
         {
+            DataBase.Initialise();
             System.Windows.Forms.Application.EnableVisualStyles();
             System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
-            System.Windows.Forms.Application.Run(new Form1());
+            System.Windows.Forms.Application.Run(new FrmMain());
         }
 
         public static string TimeLabel()
