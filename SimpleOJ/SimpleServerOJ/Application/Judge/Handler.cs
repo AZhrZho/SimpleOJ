@@ -73,12 +73,26 @@ namespace SimpleServerOJ.Application.Judge
             {
                 if (e.Data == null) return;
                 ua.Append(e.Data + Environment.NewLine);
+                if (ua.Length > 1000) return;
             };
             var start = DateTime.Now;
             p.Start();
             p.BeginOutputReadLine();
             p.StandardInput.WriteLineAsync(problem.In);
-            p.WaitForExit();
+            p.WaitForExit(1000);
+            try
+            {
+                p.Kill();
+                ua.Clear();
+                GC.Collect();
+                return new JudgeModel()
+                {
+                    Pass = false,
+                    Result = JudgeResult.WA,
+                    Time = 1001
+                };
+            }
+            catch { }
             var t = (int)(DateTime.Now - start).TotalMilliseconds;
             var uas = ua.ToString();
             var pass = problem.Out == uas ? true : false;
@@ -89,10 +103,10 @@ namespace SimpleServerOJ.Application.Judge
                 Time = t
             };
         }
+
         public static ProblemInfo ReadProblem(string id) 
         {
-            var _out = "";
-            var _in = "";
+            string _out;
             {
                 FileStream fs = new FileStream(AnswerPath.FullName + @"\" + id + @"\out.dat", FileMode.Open);
                 StreamReader sr = new StreamReader(fs);
@@ -100,6 +114,8 @@ namespace SimpleServerOJ.Application.Judge
                 fs.Close();
                 sr.Close();
             }
+
+            string _in;
             {
                 FileStream fs = new FileStream(AnswerPath.FullName + @"\" + id + @"\in.dat", FileMode.Open);
                 StreamReader sr = new StreamReader(fs);

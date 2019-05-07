@@ -19,7 +19,16 @@ namespace SimpleServerOJ.Application.Judge
             var id = args.GetArgValue("id");        //题目ID
             var language = args.GetArgValue("lan"); //语言
             var sno = Data.GetSno(session);
-            var source = Handler.SaveAsFile(code, id, "12345", language);
+            if (sno == string.Empty)
+            {
+                return ApiReturn.Return(new ApiReturn()
+                {
+                    Code = HttpCode.Success,
+                    Message = "session验证失败",
+                    Data = null
+                });
+            }
+            var source = Handler.SaveAsFile(code, id, sno, language);
             var exe = Handler.Compiler(source, language);
             if (!exe.Exists)
             {
@@ -29,7 +38,8 @@ namespace SimpleServerOJ.Application.Judge
                     {"language",language },
                     {"runtime",0 },
                     {"result",JudgeResult.EA },
-                    {"sno", sno}
+                    {"sno", sno},
+                    {"time",DateTime.Now }
                 });
             }
             var reslut = Handler.Judge(id, exe);
@@ -39,7 +49,8 @@ namespace SimpleServerOJ.Application.Judge
                     {"language",language },
                     {"runtime",reslut.Time },
                     {"result",reslut.Result },
-                    {"sno", sno}
+                    {"sno", sno},
+                    {"time",DateTime.Now }
                 });
             Console.WriteLine(Program.TimeLabel()+"用户{0}提交了问题{1}的答案，运行结果{2}，用时{3}ms.", sno, id, reslut.Result.ToString(), reslut.Time);
             return ApiReturn.Return(new ApiReturn()
