@@ -16,9 +16,12 @@ namespace SimpleServerOJ
         {
             InitializeComponent();
             Application.Application.LoadApp(typeof(Application.Judge.JudgeController));
-            Net.HttpServer server = new Net.HttpServer(8080);
+            Application.Application.LoadApp(typeof(Application.Register.RegisterController));
+            Application.Application.LoadApp(typeof(Application.Login.LoginController));
+            Net.HttpServer server = new Net.HttpServer(8081);
             server.HttpGotRequest += Server_HttpGotRequest;
             server.Start();
+            Console.WriteLine(Program.TimeLabel() + "SimpleOJ已启动.");
         }
 
         private Net.HttpResponseArgs Server_HttpGotRequest(Net.HttpArgs args)

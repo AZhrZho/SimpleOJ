@@ -18,5 +18,10 @@ namespace SimpleServerOJ
             System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
             System.Windows.Forms.Application.Run(new Form1());
         }
+
+        public static string TimeLabel()
+        {
+            return DateTime.Now.ToString("[HH:mm:ss]");
+        }
     }
 }

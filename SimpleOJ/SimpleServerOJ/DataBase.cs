@@ -12,7 +12,7 @@ namespace SimpleServerOJ
         /// <summary>
         /// 数据库名
         /// </summary>
-        private static string Name { get; set; } = "classtest";
+        private static string Name { get; set; } = "simpleoj";
         /// <summary>
         /// 数据库地址
         /// </summary>
@@ -28,7 +28,7 @@ namespace SimpleServerOJ
         /// <summary>
         /// 密码
         /// </summary>
-        private static string PassWord { get; set; } = "root";
+        private static string PassWord { get; set; } = "";
 
         private static string ConnStr { get; set; }
 

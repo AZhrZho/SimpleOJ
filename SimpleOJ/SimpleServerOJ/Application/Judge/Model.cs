@@ -16,6 +16,7 @@ namespace SimpleServerOJ.Application.Judge
     enum JudgeResult
     {
         AC,
-        WA
+        WA,
+        EA
     }
 }

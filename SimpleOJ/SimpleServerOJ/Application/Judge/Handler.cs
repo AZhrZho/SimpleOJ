@@ -55,7 +55,7 @@ namespace SimpleServerOJ.Application.Judge
             if (!file.Exists) return new JudgeModel()
             {
                 Pass = false,
-                Result = JudgeResult.WA,
+                Result = JudgeResult.EA,
                 Time = 0
             };
             Process p = new Process();
