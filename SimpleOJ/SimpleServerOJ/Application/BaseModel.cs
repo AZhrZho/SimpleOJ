@@ -111,16 +111,24 @@ namespace SimpleServerOJ.Application
             {
                 colums.Add(r["column_name"].ToString());
             }
-            var udstr = string.Format("select * from {0} where", TableName);
-            StringBuilder sb = new StringBuilder(udstr);
-            foreach (var kv in limit)
+            var udstr = "";
+            if (limit != null)
             {
-                var key = kv.Key;
-                if ((!"<>=".Contains(key.TrimEnd(' ').Last())) && (!key.ToUpper().Contains(" LIKE"))) key += '=';
-                sb.AppendFormat(" {0}'{1}' and", key, kv.Value);
+                udstr = string.Format("select * from {0} where", TableName);
+                StringBuilder sb = new StringBuilder(udstr);
+                foreach (var kv in limit)
+                {
+                    var key = kv.Key;
+                    if ((!"<>=".Contains(key.TrimEnd(' ').Last())) && (!key.ToUpper().Contains(" LIKE"))) key += '=';
+                    sb.AppendFormat(" {0}'{1}' and", key, kv.Value);
+                }
+                sb.Remove(sb.Length - 3, 3);
+                udstr = sb.ToString();
             }
-            sb.Remove(sb.Length - 3, 3);
-            udstr = sb.ToString();
+            else
+            {
+                udstr = string.Format("select * from {0}", TableName);
+            }
             MySqlCommand cmd = new MySqlCommand(udstr, conn);
             MySqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())

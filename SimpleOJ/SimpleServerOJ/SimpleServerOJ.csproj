@@ -73,6 +73,8 @@
     <Compile Include="Application\ApiReturn.cs" />
     <Compile Include="Application\Application.cs" />
     <Compile Include="Application\BaseModel.cs" />
+    <Compile Include="Application\GetPosts\Controller.cs" />
+    <Compile Include="Application\GetPosts\Model.cs" />
     <Compile Include="Application\GetProblems\Controller.cs" />
     <Compile Include="Application\Judge\Controller.cs" />
     <Compile Include="Application\Judge\Handler.cs" />

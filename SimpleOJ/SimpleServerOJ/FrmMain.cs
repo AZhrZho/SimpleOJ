@@ -19,6 +19,7 @@ namespace SimpleServerOJ
             Application.Application.LoadApp(typeof(Application.Register.RegisterController));
             Application.Application.LoadApp(typeof(Application.Login.LoginController));
             Application.Application.LoadApp(typeof(Application.GetProblems.Controller));
+            Application.Application.LoadApp(typeof(Application.GetPosts.Controller));
             Data.Problems = Data.GetProblems();
             Console.WriteLine(Program.TimeLabel() + "加载题目列表...");
             Net.HttpServer server = new Net.HttpServer(8081);
